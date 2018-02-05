@@ -6,8 +6,8 @@ PhysicMaterial:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: parede
-  dynamicFriction: 0.6
-  staticFriction: 0.6
+  dynamicFriction: 1
+  staticFriction: 1
   bounciness: 0
   frictionCombine: 3
-  bounceCombine: 3
+  bounceCombine: 0

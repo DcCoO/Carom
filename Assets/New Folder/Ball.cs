@@ -11,7 +11,7 @@ public class Ball : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		rb = GetComponent<Rigidbody> ();
-		rb.maxAngularVelocity = 100;
+		rb.maxAngularVelocity = 50;
 		rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
 	}
 
@@ -40,7 +40,8 @@ public class Ball : MonoBehaviour {
 
 	public void Hit(Vector2 direction, float power, Vector2 spin){
 		rb.angularVelocity = Vector3.zero;
+		rb.AddTorque (new Vector3(0, -spin.x * rb.maxAngularVelocity, spin.y * rb.maxAngularVelocity), ForceMode.Impulse);
 		rb.AddForce (power * new Vector3(direction.x, 0, direction.y), ForceMode.Impulse);
-		rb.AddTorque (new Vector3(0, -spin.x, spin.y), ForceMode.Impulse);
+
 	}
 }

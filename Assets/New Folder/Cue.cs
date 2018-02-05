@@ -8,6 +8,7 @@ using UnityEditor;
 
 public class Cue : MonoBehaviour {
 	public Rigidbody cueBall;
+	Transform camera;
 
 	public Vector3 direction;
 	public float soften;
@@ -18,11 +19,26 @@ public class Cue : MonoBehaviour {
 
 	public float cueAngle;
 
+	float distanceToBall = 3;
+
 
 	void Start () {
 		soften = 0.55f;
-		spinConstant = 5;
+		spinConstant = 1;
 		cueBall = GameObject.Find ("White").GetComponent<Rigidbody>();
+		camera = GameObject.Find ("Main Camera").transform;
+	}
+
+	private Vector3 velocity = Vector3.zero;
+
+	void LateUpdate (){
+		Vector3 targetPos = cueBall.position + (camera.position - cueBall.position).normalized * distanceToBall;
+		targetPos.y -= 0.5f;
+		transform.position = Vector3.SmoothDamp (transform.position, targetPos, ref velocity, 0.3f);
+		//transform.position = cueBall.position +
+		//	(camera.position - cueBall.position).normalized * 10;
+
+		transform.LookAt (cueBall.position, transform.up);
 	}
 		
 

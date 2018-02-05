@@ -4,29 +4,60 @@ using UnityEngine;
 
 public class Interaction : MonoBehaviour {
 
-	public SpinController spin;
-	public static MouseOrbitImproved orbit;
+	public MouseMove mouseMove;
+	public Spin spin;
+	public Alt alt;
+
+	//CueMove atrelado a camera
+
+	//public static MouseOrbitImproved orbit;
+
+	//shift			: none
+	//ctrl
+	//alt			: mouse move
+	//mouse0		: all
+	//mouse1
+	//mouse move
+	//mouse wheel
+
 
 	// Use this for initialization
 	void Start () {
-		
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		
+		//holding shift
+		Shift.Activate (Input.GetKey (KeyCode.LeftShift) || Input.GetKey (KeyCode.RightShift)); 
+
+		//holding mouse0 (spin)
+		spin.Turn(Input.GetMouseButton (0));
+		if(spin.enabled) {Set (false, true, false); return;}
+
+		//TODO: holding mouse1 (cue angle)
+
+		//TODO: holding ctrl (shot)
+
+		//TODO: press tab
+		if(Input.GetKeyDown(KeyCode.Tab)) Tab.Turn ();
+
+		//holding alt (camera height)
+		alt.enabled = Input.GetKey (KeyCode.LeftAlt) || Input.GetKey (KeyCode.RightAlt) || Input.GetMouseButton(1);
+		if (alt.enabled) {Set (false, false, true); return;}
+
+		//not holding anything
+		Set(true, false, false);
+
+
 	}
 
-	public static void SetOrbit(bool b){
 
-		if (Input.GetMouseButton (0)) {
-
-		}
-
-		if (orbit == null) {
-			orbit = GameObject.Find("Main Camera").GetComponent<MouseOrbitImproved>();
-		}
-		orbit.enabled = b;
+	void Set(bool mouseMove, bool spin, bool alt){
+		this.mouseMove.enabled = mouseMove;
+		this.spin.enabled = spin;
+		this.alt.enabled = alt;
 	}
+
+
 
 }
