@@ -49,14 +49,14 @@ public class MouseMove : MonoBehaviour {
 			cue.cueBall.transform.position.z - transform.position.z
 		).normalized;
 
-
+		/*
 		DrawArrow.ForDebug (cue.cueBall.transform.position,
 			(cue.cueBall.transform.position - new Vector3 (
 				transform.position.x, 
 				cue.cueBall.transform.position.y,
 				transform.position.z
 			)).normalized * 5
-		);
+		);*/
 
 	}
 

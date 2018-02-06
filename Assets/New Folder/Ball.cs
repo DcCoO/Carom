@@ -8,11 +8,14 @@ public class Ball : MonoBehaviour {
 	public float drag;
 	public float spinDuration;
 	public Vector3 velocity;
-	// Use this for initialization
+	Transform identity;
+
+
 	void Start () {
 		rb = GetComponent<Rigidbody> ();
 		rb.maxAngularVelocity = 50;
 		rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
+		identity = GameObject.Find ("Cue Identity").transform;
 	}
 
 
@@ -20,6 +23,9 @@ public class Ball : MonoBehaviour {
 		if (Input.GetKeyDown (KeyCode.A) && number == 0) {
 			GameObject.Find ("Cue").GetComponent<Cue> ().Shot ();
 		}
+
+		DrawArrow.ForDebug (transform.position, Vector3.up, Color.blue);
+		DrawArrow.ForDebug (transform.position, identity.up, Color.red);
 	}
 
 	// Update is called once per frame
@@ -40,7 +46,11 @@ public class Ball : MonoBehaviour {
 
 	public void Hit(Vector2 direction, float power, Vector2 spin){
 		rb.angularVelocity = Vector3.zero;
-		rb.AddTorque (new Vector3(0, -spin.x * rb.maxAngularVelocity, spin.y * rb.maxAngularVelocity), ForceMode.Impulse);
+		//Vector3 effect = new Vector3 (spin.y * rb.maxAngularVelocity, -spin.x * rb.maxAngularVelocity, 0);
+		//GameObject.Find ("Cue").GetComponent<Rigidbody> ().AddTorque (effect, ForceMode.Impulse);
+		//rb.AddTorque (effect, ForceMode.Impulse);
+		rb.AddTorque (Vector3.up  * -spin.x, ForceMode.Impulse);
+		rb.AddTorque (identity.up * -spin.y, ForceMode.Impulse);
 		rb.AddForce (power * new Vector3(direction.x, 0, direction.y), ForceMode.Impulse);
 
 	}
