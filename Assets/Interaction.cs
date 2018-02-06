@@ -7,6 +7,9 @@ public class Interaction : MonoBehaviour {
 	public MouseMove mouseMove;
 	public Spin spin;
 	public Alt alt;
+	public Cue cue;
+	public Ctrl ctrl;
+
 
 	//CueMove atrelado a camera
 
@@ -37,6 +40,9 @@ public class Interaction : MonoBehaviour {
 		//TODO: holding mouse1 (cue angle)
 
 		//TODO: holding ctrl (shot)
+		ctrl.Activate(Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl));
+		cue.Activate(!ctrl.turnedOn);
+		if (ctrl.turnedOn) {Set (false, true, false); return;}
 
 		//TODO: press tab
 		if(Input.GetKeyDown(KeyCode.Tab)) Tab.Turn ();

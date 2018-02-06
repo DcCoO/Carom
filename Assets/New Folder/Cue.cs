@@ -15,36 +15,40 @@ public class Cue : MonoBehaviour {
 	public int power;
 
 	public Vector2 spin;
-	public float spinConstant;
+	float spinConstant = 0.07f;
 
 	public float cueAngle;
 
-	float distanceToBall = 3;
-
+	float distanceToBall = 2.1f;
 
 	void Start () {
 		soften = 0.55f;
-		spinConstant = 1;
 		cueBall = GameObject.Find ("White").GetComponent<Rigidbody>();
 		camera = GameObject.Find ("Main Camera").transform;
 	}
 
 	private Vector3 velocity = Vector3.zero;
 
+	bool turnedOn = true;
+
 	void LateUpdate (){
+		if (!turnedOn) return;
+		Vector3 offset = (transform.right * spin.x + transform.up * spin.y) * spinConstant;
+
 		Vector3 targetPos = cueBall.position + (camera.position - cueBall.position).normalized * distanceToBall;
 		targetPos.y -= 0.5f;
-		transform.position = Vector3.SmoothDamp (transform.position, targetPos, ref velocity, 0.3f);
-		//transform.position = cueBall.position +
-		//	(camera.position - cueBall.position).normalized * 10;
+		transform.position = Vector3.SmoothDamp (transform.position, targetPos + offset, ref velocity, 0.1f);
 
-		transform.LookAt (cueBall.position, transform.up);
+		transform.LookAt (cueBall.position + offset);
 	}
 		
 
-	public void Shot () {
-		print ("spin: " + spin + ", spinConst: " + spinConstant); 
-		cueBall.gameObject.GetComponent<Ball> ().Hit (direction, soften * power, spin * spinConstant);
+	public void Shot () { 
+		cueBall.gameObject.GetComponent<Ball> ().Hit (direction, soften * power, spin);
+	}
+
+	public void Activate(bool state){
+		turnedOn = state;
 	}
 
 
@@ -77,7 +81,7 @@ class CueEditor : Editor {
 
 
 		if (GUILayout.Button ("Shot")) {
-			c.cueBall.gameObject.GetComponent<Ball> ().Hit (c.direction, c.soften * c.power, c.spinConstant * c.spin);
+			c.cueBall.gameObject.GetComponent<Ball> ().Hit (c.direction, c.soften * c.power, c.spin);
 		}
 
 

@@ -23,7 +23,6 @@ public class Spin : MonoBehaviour {
 			Screen.height - ball.rectTransform.rect.height/2,
 			0
 		);
-		print (ball.rectTransform.position);
 		angle.rectTransform.position = new Vector3 (ball.rectTransform.rect.width / 2,
 			Screen.height - ball.rectTransform.rect.height / 2,
 			0
