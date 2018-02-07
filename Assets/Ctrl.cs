@@ -10,16 +10,21 @@ public class Ctrl : MonoBehaviour {
 	float maxDist = 5;
 	float mouseConstant = 0.2f;
 	float mouseY;
+	Cue cue;
 
 	Vector2 spin;
 
 	float distance;
 	float nextDistance;
 
+	public bool shooting = false;
+	int power;
+
 	// Use this for initialization
 	void Start () {
 		camera = GameObject.Find ("Main Camera").transform;
-		spin = GetComponent<Cue> ().spin;
+		cue = GetComponent<Cue> ();
+		spin = cue.spin;
 	}
 
 	Vector3 velocity = Vector3.zero;
@@ -29,16 +34,34 @@ public class Ctrl : MonoBehaviour {
 	void Update () {
 		if (!turnedOn) return;
 
+		if (shooting) {
+			transform.position += transform.forward * mouseConstant;
+			distance -= mouseConstant;
+			if (distance < minDist) {
+				shooting = false;
+				cue.Shot (power);
+			}
+			return;			
+		}
+
 		nextDistance = Mathf.Clamp(distance - Input.GetAxis("Mouse Y") * mouseConstant, minDist, maxDist);
-		print ("DISTANCE = " + distance + "      OFFSET = " + (Input.GetAxis("Mouse Y") * mouseConstant));
 
 		transform.position -= transform.forward * (nextDistance - distance);
 		distance = nextDistance;
 
+		if (Input.GetKeyDown (KeyCode.Space)) {
+			shooting = true;
+			power = (int) (100.0f * ((distance - minDist) / (maxDist - minDist)));
+			print ("VAI EXPRODIR COM POWER " + power);
+		}
+
 	}
 
 	public void Activate(bool state){
-		if(!turnedOn && state) distance = 2.1f;
+		if (!turnedOn && state) {
+			distance = 2.1f;
+			shooting = false;
+		}
 		turnedOn = state;
 	}
 }

@@ -8,6 +8,7 @@ public class Ball : MonoBehaviour {
 	public float drag;
 	public float spinDuration;
 	public Vector3 velocity;
+	public bool stopped;
 	Transform identity;
 
 
@@ -16,12 +17,13 @@ public class Ball : MonoBehaviour {
 		rb.maxAngularVelocity = 50;
 		rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
 		identity = GameObject.Find ("Cue Identity").transform;
+		stopped = true;
 	}
 
 
 	void Update(){
 		if (Input.GetKeyDown (KeyCode.A) && number == 0) {
-			GameObject.Find ("Cue").GetComponent<Cue> ().Shot ();
+			GameObject.Find ("Cue").GetComponent<Cue> ().Shot (50);
 		}
 
 		DrawArrow.ForDebug (transform.position, Vector3.up, Color.blue);
@@ -52,6 +54,5 @@ public class Ball : MonoBehaviour {
 		rb.AddTorque (Vector3.up  * -spin.x, ForceMode.Impulse);
 		rb.AddTorque (identity.up * -spin.y, ForceMode.Impulse);
 		rb.AddForce (power * new Vector3(direction.x, 0, direction.y), ForceMode.Impulse);
-
 	}
 }
