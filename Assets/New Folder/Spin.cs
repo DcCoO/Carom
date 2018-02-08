@@ -15,7 +15,6 @@ public class Spin : MonoBehaviour {
 	public Vector2 spin;
 	float safeDistance = 3;
 
-	// Use this for initialization
 	void Start () {
 		ball.enabled = angle.enabled = false;
 		ball.rectTransform.position = new Vector3 (
@@ -40,8 +39,7 @@ public class Spin : MonoBehaviour {
 		}
 		enabled = state;
 	}
-
-
+		
 	void Update () {
 		Vector2 delta = (Vector2) Input.mousePosition - this.position;
 		if (delta == Vector2.zero)

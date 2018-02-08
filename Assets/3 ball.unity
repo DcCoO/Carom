@@ -264,7 +264,6 @@ MonoBehaviour:
   cueBall: {fileID: 2088347541}
   direction: {x: 0, y: 0, z: 0}
   soften: 0
-  power: 32
   spin: {x: 0, y: 0}
   cueAngle: 0
 --- !u!114 &165847879
@@ -279,6 +278,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cueBall: {fileID: 2088347545}
+  shooting: 0
   turnedOn: 0
 --- !u!4 &165847881 stripped
 Transform:
@@ -366,6 +366,7 @@ GameObject:
   - component: {fileID: 234971174}
   - component: {fileID: 234971175}
   - component: {fileID: 234971176}
+  - component: {fileID: 234971177}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -480,6 +481,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 2088347545}
+--- !u!114 &234971177
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 234971169}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 028c799d47be441439798d7a4ed71542, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &281395758
 GameObject:
   m_ObjectHideFlags: 0
@@ -1279,3 +1291,4 @@ MonoBehaviour:
   drag: 0.1
   spinDuration: 1
   velocity: {x: 0, y: 0, z: 0}
+  stopped: 0
