@@ -4,15 +4,76 @@ using UnityEngine;
 
 public class AimPoint : MonoBehaviour {
 
+	public LayerMask mask;
+
+	Transform cueBall;
+	Ball props;
+	float radius;
+
+	GameObject aimBall;
+
 	// Use this for initialization
 	void Start () {
-		
+		GameObject g = GameObject.Find ("White");
+		props = g.GetComponent<Ball> ();
+		cueBall = g.transform;
+		radius = g.GetComponent<SphereCollider> ().radius;
+		aimBall = GameObject.Find ("Aim Ball");
+
 	}
 
 	// Update is called once per frame
 	void Update () {
-		
+
+		if (Input.GetKeyDown (KeyCode.S)) {
+			Rigidbody[] rbs = FindObjectsOfType<Rigidbody> ();
+			foreach (Rigidbody rb in rbs)
+				rb.velocity = rb.angularVelocity = Vector3.zero; 
+		}
+
+		Debug.DrawRay(cueBall.position - props.right(radius * 0.15f), 7 * props.forward(), Color.blue);
+		Ray leftRay = new Ray (cueBall.position - props.right (radius * 0.15f), props.forward ());
+		RaycastHit leftHit;
+
+		Debug.DrawRay(cueBall.position + props.right(radius * 0.15f), 7 * props.forward(), Color.blue);
+		Ray rightRay = new Ray (cueBall.position + props.right (radius * 0.15f), props.forward ());
+		RaycastHit rightHit;
+
+		bool act = false;
+
+		bool lrc = Physics.Raycast (leftRay, out leftHit, 8, mask);
+		bool rrc = Physics.Raycast (rightRay, out rightHit, 8, mask);
+
+		if (lrc && rrc) {
+			if (leftHit.transform.gameObject.name != rightHit.transform.gameObject.name) {
+				aimBall.transform.position = Hitpoint (cueBall.gameObject, props.forward (), 
+					Vector3.Distance(cueBall.transform.position, leftHit.transform.position) <
+					Vector3.Distance(cueBall.transform.position, rightHit.transform.position) ?
+					leftHit.transform.gameObject : rightHit.transform.gameObject);
+			}
+		}
+
+		else if (lrc) {
+			if (leftHit.collider.tag == "ball") {
+				aimBall.SetActive (true);
+				aimBall.transform.position = Hitpoint (cueBall.gameObject, props.forward (), leftHit.transform.gameObject);
+			}
+		} 
+		else if (rrc) {
+			if (rightHit.collider.tag == "ball") {
+				aimBall.SetActive (true);
+				aimBall.transform.position = Hitpoint (cueBall.gameObject, props.forward (), rightHit.transform.gameObject);
+			}
+		}
+		else {
+			aimBall.SetActive (false);
+		}
+
+
+
 	}
+
+
 
 	Vector3 Hitpoint(GameObject source, Vector3 d, GameObject target){
 
@@ -20,7 +81,7 @@ public class AimPoint : MonoBehaviour {
 		Vector3 t = target.transform.position;
 
 		float radius = source.GetComponent<SphereCollider> ().radius;
-		float distance = 2 * radius;
+		float distance = 2 * radius * 0.15f;
 
 		//representar equacao parametrica da reta
 		//	x = s.x + p * d.x

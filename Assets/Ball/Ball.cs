@@ -26,9 +26,14 @@ public class Ball : MonoBehaviour {
 			GameObject.Find ("Cue").GetComponent<Cue> ().Shot (50);
 		}
 
-		DrawArrow.ForDebug (transform.position, Vector3.up, Color.blue);
-		DrawArrow.ForDebug (transform.position, identity.up, Color.red);
+		//DrawArrow.ForDebug (transform.position, Vector3.up, Color.blue);
+		//DrawArrow.ForDebug (transform.position, identity.up, Color.red);
+		//DrawArrow.ForDebug (transform.position, identity.forward, Color.green);
 	}
+
+	public Vector3 right(float size = 1){return size * -identity.up;}
+	public Vector3 up(float size = 1){return size * Vector3.up;}
+	public Vector3 forward(float size = 1){return size * identity.forward;}
 
 	// Update is called once per frame
 	void FixedUpdate () {
