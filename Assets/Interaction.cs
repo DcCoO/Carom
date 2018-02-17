@@ -9,6 +9,7 @@ public class Interaction : MonoBehaviour {
 	public Alt alt;
 	public Cue cue;
 	public Ctrl ctrl;
+	public CueAngle cueAngle;
 
 
 	//CueMove atrelado a camera
@@ -38,6 +39,8 @@ public class Interaction : MonoBehaviour {
 		if(spin.enabled) {Set (false, true, false); return;}
 
 		//TODO: holding mouse1 (cue angle)
+		cueAngle.Turn(Input.GetMouseButton(1), mouseMove.distance);
+		if (cueAngle.enabled) {Set (false, false, false); return;}
 
 		//TODO: holding ctrl (shot)
 		ctrl.Activate(Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl));
@@ -48,7 +51,7 @@ public class Interaction : MonoBehaviour {
 		if(Input.GetKeyDown(KeyCode.Tab)) Tab.Turn ();
 
 		//holding alt (camera height)
-		alt.enabled = Input.GetKey (KeyCode.LeftAlt) || Input.GetKey (KeyCode.RightAlt) || Input.GetMouseButton(1);
+		alt.enabled = Input.GetKey (KeyCode.LeftAlt) || Input.GetKey (KeyCode.RightAlt);
 		if (alt.enabled) {Set (false, false, true); return;}
 
 		//not holding anything

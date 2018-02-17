@@ -9,6 +9,7 @@ using UnityEditor;
 public class Cue : MonoBehaviour {
 	public Rigidbody cueBall;
 	Transform camera;
+	Transform identity;
 
 	public Vector3 direction;
 	public float soften;
@@ -24,6 +25,7 @@ public class Cue : MonoBehaviour {
 	void Start () {
 		cueBall = GameObject.Find ("White").GetComponent<Rigidbody>();
 		camera = GameObject.Find ("Main Camera").transform;
+		identity = GameObject.Find ("Cue Identity").transform;
 	}
 
 	private Vector3 velocity = Vector3.zero;
@@ -36,6 +38,7 @@ public class Cue : MonoBehaviour {
 
 		Vector3 targetPos = cueBall.position + (camera.position - cueBall.position).normalized * distanceToBall;
 		targetPos.y -= 0.5f;
+		//targetPos.y = transform.position.y;
 		transform.position = Vector3.SmoothDamp (transform.position, targetPos + offset, ref velocity, 0.1f);
 
 		transform.LookAt (cueBall.position + offset);
@@ -49,6 +52,10 @@ public class Cue : MonoBehaviour {
 	public void Activate(bool state){
 		turnedOn = state;
 	}
+
+	public Vector3 right(float size = 1){return size * -identity.up;}
+	public Vector3 up(float size = 1){return size * Vector3.up;}
+	public Vector3 forward(float size = 1){return size * identity.forward;}
 
 
 }

@@ -51,8 +51,8 @@ public class Ctrl : MonoBehaviour {
 
 		if (Input.GetKeyDown (KeyCode.Space)) {
 			shooting = true;
-			power = (int) (100.0f * ((distance - minDist) / (maxDist - minDist)));
-			print ("VAI EXPRODIR COM POWER " + power);
+			power = (int) (20.0f * ((distance - minDist) / (maxDist - minDist)));
+			//print ("VAI EXPRODIR COM POWER " + power);
 		}
 
 	}

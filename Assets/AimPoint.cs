@@ -7,7 +7,7 @@ public class AimPoint : MonoBehaviour {
 	public LayerMask mask;
 
 	Transform cueBall;
-	Ball props;
+	Cue cue;
 	float radius;
 
 	GameObject aimBall;
@@ -15,7 +15,7 @@ public class AimPoint : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		GameObject g = GameObject.Find ("White");
-		props = g.GetComponent<Ball> ();
+		cue = GameObject.Find ("Cue").GetComponent<Cue>();
 		cueBall = g.transform;
 		radius = g.GetComponent<SphereCollider> ().radius;
 		aimBall = GameObject.Find ("Aim Ball");
@@ -25,18 +25,12 @@ public class AimPoint : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-		if (Input.GetKeyDown (KeyCode.S)) {
-			Rigidbody[] rbs = FindObjectsOfType<Rigidbody> ();
-			foreach (Rigidbody rb in rbs)
-				rb.velocity = rb.angularVelocity = Vector3.zero; 
-		}
-
-		Debug.DrawRay(cueBall.position - props.right(radius * 0.15f), 7 * props.forward(), Color.blue);
-		Ray leftRay = new Ray (cueBall.position - props.right (radius * 0.15f), props.forward ());
+		Debug.DrawRay(cueBall.position - cue.right(radius * 0.15f), 7 * cue.forward(), Color.blue);
+		Ray leftRay = new Ray (cueBall.position - cue.right (radius * 0.15f), cue.forward ());
 		RaycastHit leftHit;
 
-		Debug.DrawRay(cueBall.position + props.right(radius * 0.15f), 7 * props.forward(), Color.blue);
-		Ray rightRay = new Ray (cueBall.position + props.right (radius * 0.15f), props.forward ());
+		Debug.DrawRay(cueBall.position + cue.right(radius * 0.15f), 7 * cue.forward(), Color.blue);
+		Ray rightRay = new Ray (cueBall.position + cue.right (radius * 0.15f), cue.forward ());
 		RaycastHit rightHit;
 
 		bool act = false;
@@ -46,7 +40,7 @@ public class AimPoint : MonoBehaviour {
 
 		if (lrc && rrc) {
 			if (leftHit.transform.gameObject.name != rightHit.transform.gameObject.name) {
-				aimBall.transform.position = Hitpoint (cueBall.gameObject, props.forward (), 
+				aimBall.transform.position = Hitpoint (cueBall.gameObject, cue.forward (), 
 					Vector3.Distance(cueBall.transform.position, leftHit.transform.position) <
 					Vector3.Distance(cueBall.transform.position, rightHit.transform.position) ?
 					leftHit.transform.gameObject : rightHit.transform.gameObject);
@@ -56,13 +50,13 @@ public class AimPoint : MonoBehaviour {
 		else if (lrc) {
 			if (leftHit.collider.tag == "ball") {
 				aimBall.SetActive (true);
-				aimBall.transform.position = Hitpoint (cueBall.gameObject, props.forward (), leftHit.transform.gameObject);
+				aimBall.transform.position = Hitpoint (cueBall.gameObject, cue.forward (), leftHit.transform.gameObject);
 			}
 		} 
 		else if (rrc) {
 			if (rightHit.collider.tag == "ball") {
 				aimBall.SetActive (true);
-				aimBall.transform.position = Hitpoint (cueBall.gameObject, props.forward (), rightHit.transform.gameObject);
+				aimBall.transform.position = Hitpoint (cueBall.gameObject, cue.forward (), rightHit.transform.gameObject);
 			}
 		}
 		else {
