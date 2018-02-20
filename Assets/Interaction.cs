@@ -39,8 +39,8 @@ public class Interaction : MonoBehaviour {
 		if(spin.enabled) {Set (false, true, false); return;}
 
 		//TODO: holding mouse1 (cue angle)
-		cueAngle.enabled = Input.GetMouseButton(1);
-		if (cueAngle.enabled) {Set (false, false, false); return;}
+		cueAngle.Turn(Input.GetMouseButton(1));
+		if (cueAngle.enabled) {Set (false, false, true); return;}
 
 		//TODO: holding ctrl (shot)
 		ctrl.Activate(Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl));

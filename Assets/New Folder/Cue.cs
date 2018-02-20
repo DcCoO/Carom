@@ -8,7 +8,6 @@ public class Cue : MonoBehaviour {
 	Transform identity;
 
 	public Vector3 direction;
-	//public int power;
 
 	public Vector2 spin;
 	float spinConstant = 0.07f;
@@ -38,8 +37,6 @@ public class Cue : MonoBehaviour {
 		transform.position = Vector3.SmoothDamp (transform.position, pos + offset, ref velocity, 0.04f);
 
 		transform.LookAt (cueBall.position + offset);
-
-		print (Vector3.Distance (cueBall.position, transform.position));
 	}
 
 	public void Shot (int power = 0) { 
