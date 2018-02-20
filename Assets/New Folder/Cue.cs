@@ -2,30 +2,25 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
-
 public class Cue : MonoBehaviour {
 	public Rigidbody cueBall;
-	Transform camera;
+	public Transform camera;
 	Transform identity;
 
 	public Vector3 direction;
-	public float soften;
 	//public int power;
 
 	public Vector2 spin;
 	float spinConstant = 0.07f;
 
-	public float cueAngle;
+	CueAngle cueAngle;
 
 	float distanceToBall = 2.1f;
 
 	void Start () {
 		cueBall = GameObject.Find ("White").GetComponent<Rigidbody>();
-		camera = GameObject.Find ("Main Camera").transform;
 		identity = GameObject.Find ("Cue Identity").transform;
+		cueAngle = GetComponent<CueAngle> ();
 	}
 
 	private Vector3 velocity = Vector3.zero;
@@ -35,15 +30,17 @@ public class Cue : MonoBehaviour {
 	void LateUpdate (){
 		if (!turnedOn) return;
 		Vector3 offset = (transform.right * spin.x + transform.up * spin.y) * spinConstant;
+		Vector3 camProj = new Vector3 (camera.position.x, cueBall.position.y, camera.position.z);
+		Vector3 pos = cueBall.position + (camProj - cueBall.position).normalized * 
+			distanceToBall * Mathf.Cos(Mathf.Deg2Rad * cueAngle.angle);
+		pos.y = cueBall.position.y + Mathf.Sin( Mathf.Deg2Rad * cueAngle.angle ) * distanceToBall;
 
-		Vector3 targetPos = cueBall.position + (camera.position - cueBall.position).normalized * distanceToBall;
-		targetPos.y -= 0.5f;
-		//targetPos.y = transform.position.y;
-		transform.position = Vector3.SmoothDamp (transform.position, targetPos + offset, ref velocity, 0.1f);
+		transform.position = Vector3.SmoothDamp (transform.position, pos + offset, ref velocity, 0.04f);
 
 		transform.LookAt (cueBall.position + offset);
+
+		print (Vector3.Distance (cueBall.position, transform.position));
 	}
-		
 
 	public void Shot (int power = 0) { 
 		cueBall.gameObject.GetComponent<Ball> ().Hit (direction, power, spin);
@@ -59,39 +56,3 @@ public class Cue : MonoBehaviour {
 
 
 }
-
-
-#if UNITY_EDITOR
-
-[CustomEditor(typeof(Cue))]
-class CueEditor : Editor {
-
-	public override void OnInspectorGUI(){
-		//DrawDefaultInspector ();
-		Cue c = (Cue)target;
-
-		EditorGUIUtility.labelWidth = 70;
-
-		c.cueBall = (Rigidbody)EditorGUILayout.ObjectField ("Cue Ball:", c.cueBall, typeof(Rigidbody), true);
-
-		//EditorGUILayout.BeginHorizontal ();
-		c.direction = EditorGUILayout.Vector2Field ("Direction", c.direction);
-		//c.power = EditorGUILayout.IntField("Power:", c.power); 
-
-		//EditorGUILayout.EndHorizontal ();
-
-		EditorGUILayout.BeginHorizontal ();
-
-		EditorGUILayout.Vector2Field ("Spin", c.spin);
-		EditorGUILayout.EndHorizontal ();
-
-
-		//if (GUILayout.Button ("Shot")) {
-		//	c.cueBall.gameObject.GetComponent<Ball> ().Hit (c.direction, c.soften * c.power, c.spin);
-		//}
-
-
-	}
-
-}
-#endif

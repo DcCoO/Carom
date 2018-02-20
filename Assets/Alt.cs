@@ -7,38 +7,24 @@ public class Alt : MonoBehaviour {
 	public Transform target;
 	float distance;
 
-	float yMinLimit = -20f;
+	float yMinLimit = 0f;
 	float yMaxLimit = 89f;
 
-	Rigidbody rigidbody;
-
 	public Cue cue;
-	CueAngle cueAngle;
 
-	public float angle = 0.0f;
-
-	public float getDist(){
-		return distance;
-	}
+	public float angle;
 
 	// Use this for initialization
 	void Start () {
-		Vector3 angles = transform.eulerAngles;
-		angle = angles.x;
-		cueAngle = cue.GetComponent<CueAngle> ();
+		angle = 0;
 
-		rigidbody = GetComponent<Rigidbody>();
 
 		// Make the rigid body not change rotation
-		if (rigidbody != null){
-			rigidbody.freezeRotation = true;
-		}
 	}
 
 	void LateUpdate () {
 		angle += Input.GetAxis ("Mouse Y") * Shift.speed;
 		angle = ClampAngle(angle, yMinLimit, yMaxLimit);
-		angle = Mathf.Max (angle, /*cueAngle.angle*/3);
 
 		Quaternion rotation = Quaternion.Euler(angle, transform.eulerAngles.y, 0);
 
@@ -50,12 +36,10 @@ public class Alt : MonoBehaviour {
 		transform.rotation = rotation;
 		transform.position = position;
 
-		/*
 		cue.direction = new Vector2 (
 			cue.cueBall.transform.position.x - transform.position.x,
 			cue.cueBall.transform.position.z - transform.position.z
 		).normalized;
-		*/
 	}
 
 	public static float ClampAngle(float angle, float min, float max){

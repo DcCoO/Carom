@@ -28,7 +28,7 @@ public class Ball : MonoBehaviour {
 				rb.velocity = rb.angularVelocity = Vector3.zero; 
 		}
 
-		DrawArrow.ForDebug (transform.position, Vector3.up, Color.blue);
+		//DrawArrow.ForDebug (transform.position, Vector3.up, Color.blue);
 		//DrawArrow.ForDebug (transform.position, identity.up, Color.red);
 		//DrawArrow.ForDebug (transform.position, identity.forward, Color.green);
 	}

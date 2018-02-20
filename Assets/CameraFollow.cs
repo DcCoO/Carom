@@ -6,9 +6,11 @@ public class CameraFollow : MonoBehaviour {
 	public Transform target;
 	Vector3 offset;
 
+	public static Vector3 cameraPos;
+
 	// Use this for initialization
 	void Start () {
-		
+		cameraPos = new Vector3(transform.position.x, transform.position.y, transform.position.z);
 	}
 	
 	// Update is called once per frame

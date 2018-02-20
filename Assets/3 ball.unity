@@ -262,10 +262,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cueBall: {fileID: 2088347541}
+  camera: {fileID: 234971173}
   direction: {x: 0, y: 0, z: 0}
-  soften: 0
   spin: {x: 0, y: 0}
-  cueAngle: 0
 --- !u!114 &165847879
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -457,8 +456,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 234971169}
-  m_LocalRotation: {x: 0.6463904, y: 0, z: 0, w: 0.7630069}
-  m_LocalPosition: {x: 0, y: 24, z: -10.9}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -2.2201092, y: 1.0101, z: -5.750027}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -487,7 +486,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 234971169}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bdfd64fe83044e147818de4c885f287f, type: 3}
   m_Name: 
@@ -896,6 +895,10 @@ Prefab:
     - target: {fileID: 100000, guid: a809e6828f2e8d3418f4569d970d470b, type: 3}
       propertyPath: m_Name
       value: model
+      objectReference: {fileID: 0}
+    - target: {fileID: 2300000, guid: a809e6828f2e8d3418f4569d970d470b, type: 3}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 9500000, guid: a809e6828f2e8d3418f4569d970d470b, type: 3}
