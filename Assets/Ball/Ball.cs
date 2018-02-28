@@ -27,10 +27,6 @@ public class Ball : MonoBehaviour {
 			foreach (Rigidbody rb in rbs)
 				rb.velocity = rb.angularVelocity = Vector3.zero; 
 		}
-
-		//DrawArrow.ForDebug (transform.position, Vector3.up, Color.blue);
-		//DrawArrow.ForDebug (transform.position, identity.up, Color.red);
-		//DrawArrow.ForDebug (transform.position, identity.forward, Color.green);
 	}
 
 	public Vector3 right 	{ get { return Vector3.Cross (Vector3.up, rb.velocity.normalized); } }
@@ -40,11 +36,12 @@ public class Ball : MonoBehaviour {
 	public float sideSpin	{ get { return spin.x; } }
 	public float topSpin	{ get { return spin.y; } }
 
-
+	Vector3 hitSide, hitForward;
 
 	void FixedUpdate () {
 
-		//DrawArrow.ForDebug (transform.position, rb.velocity.normalized);
+		DrawArrow.ForDebug (transform.position, hitSide, Color.green);
+		DrawArrow.ForDebug (transform.position, hitForward, Color.red);
 
 		//reduzir o velocity
 		rb.velocity -= rb.velocity.magnitude > 0.14f ? rb.velocity * drag : rb.velocity;
@@ -52,10 +49,19 @@ public class Ball : MonoBehaviour {
 
 		//corrigir o velocity de acordo com a rotacao
 		//////////// RESETAR K A CADA TACADA (DE ACORDO COM INCLINACAO) E DIMINUIR ELE A CADA FRAME
-		float K = 0.04f;
-		rb.AddForce(K * forward * SpinIntensityAroundAxis(right) * Time.deltaTime, ForceMode.VelocityChange);
-		rb.AddForce(K * right * SpinIntensityAroundAxis(forward) * Time.deltaTime, ForceMode.VelocityChange);
+		//float K = Mathf.Max(spinIntensity, 0.005f);
+		//print (K);
+		//rb.AddTorque(K * right * SpinIntensityAroundAxis(right) * Time.deltaTime, ForceMode.VelocityChange);
+		//rb.AddTorque(K * forward * SpinIntensityAroundAxis(forward) * Time.deltaTime, ForceMode.VelocityChange);
 
+		//os angulos de efeito abaixo tem q ser MANTIDOS, esse right eh calculado de acordo com o velocity
+		//entao ele muda a todo frame, quando dar o hit, o angulo tem q ser salvo (TESTAR)
+
+		rb.AddForce(hitForward, ForceMode.VelocityChange);
+		rb.AddForce(hitSide, ForceMode.VelocityChange);
+		//spinIntensity -= Time.deltaTime;
+		float K = 1f;
+		hitSide *= K; hitForward *= K;	
 
 		//ampliar a rotacao de acordo com o velocity
 		rb.AddTorque(SpinAddedByVelocity(rb.velocity));
@@ -118,9 +124,9 @@ public class Ball : MonoBehaviour {
 		//print ("sideSpin = " + sideSpin + " --- contato = " + contactAngle +" --- desviada de " + Mathf.Max (0, 35f - 0.684f * contactAngle));
 		if (contactAngle > maxContactAngle) return Quaternion.Euler (0, 0, 0);
 
-		print ("CONTACT: " + contactAngle + ", RATE: " + ((maxContactAngle - contactAngle) / maxContactAngle) + ", SPIN: " +
-			((maxContactAngle - contactAngle) / maxContactAngle) * 
-			(maxAngle * (sideSpin/rb.maxAngularVelocity))); 
+		//print ("CONTACT: " + contactAngle + ", RATE: " + ((maxContactAngle - contactAngle) / maxContactAngle) + ", SPIN: " +
+		//	((maxContactAngle - contactAngle) / maxContactAngle) * 
+		//	(maxAngle * (sideSpin/rb.maxAngularVelocity))); 
 
 
 
@@ -139,13 +145,37 @@ public class Ball : MonoBehaviour {
 
 
 	public void Hit(Vector2 direction, float power, Vector2 spin){
+		//seno do angulo do taco
+		float angleForce = Mathf.Sin ( Mathf.Deg2Rad * GameObject.Find ("Cue").GetComponent<CueAngle> ().angle);
+
+		//quanto maior o angulo do taco, menor o efeito pro lado
+		spin.x *= (1 - angleForce);
+
+		//zera rotacao
 		rb.angularVelocity = Vector3.zero;
+		//corrige a escala do efeito
 		this.spin = spin * -rb.maxAngularVelocity;
-		//Vector3 effect = new Vector3 (spin.y * rb.maxAngularVelocity, -spin.x * rb.maxAngularVelocity, 0);
-		//GameObject.Find ("Cue").GetComponent<Rigidbody> ().AddTorque (effect, ForceMode.Impulse);
-		//rb.AddTorque (effect, ForceMode.Impulse);
-		rb.AddTorque (Vector3.up  * -this.spin.x, ForceMode.VelocityChange);
-		rb.AddTorque (identity.up * -this.spin.y, ForceMode.VelocityChange);
-		rb.AddForce (power * new Vector3(direction.x, 0, direction.y), ForceMode.VelocityChange);
+
+		//adiciona efeito lateral
+		rb.AddTorque (Vector3.up  * this.spin.x, ForceMode.VelocityChange);
+		//adiciona efeito frontal
+		rb.AddTorque (identity.up * this.spin.y, ForceMode.VelocityChange);
+		//adiciona forca de acordo com angulo do taco
+		rb.AddForce (power * (1 - angleForce) * new Vector3(direction.x, 0, direction.y), ForceMode.VelocityChange);
+
+		//direcao frontal gerada pelo efeito
+		hitForward = new Vector3 (direction.x, 0, direction.y).normalized;
+		if(spin.y < 0) hitForward = rotatePointAroundAxis(hitForward);
+		//direcao lateral gerada pelo efeito
+		hitSide = Vector3.Cross (Vector3.up, hitForward);
+		if(spin.x < 0) hitSide = rotatePointAroundAxis(hitSide);
+
+		//escalando os vetores do efeito
+		hitForward *= Mathf.Abs (spin.y) * power * angleForce;
+		hitSide	   *= Mathf.Abs (spin.x) * power * angleForce;
+	}
+
+	Vector3 rotatePointAroundAxis(Vector3 point) {
+		return Quaternion.AngleAxis(180f, Vector3.up) * point;
 	}
 }

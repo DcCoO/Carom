@@ -24,7 +24,7 @@ public class CueAngle : MonoBehaviour {
 	}
 
 	void LateUpdate () {
-		angle += Input.GetAxis ("Mouse Y") * Shift.speed;
+		angle += Input.GetAxis ("Mouse Y") * 1.5f * Shift.speed;
 		angle = ClampAngle(angle, yMinLimit, yMaxLimit);
 	}
 
