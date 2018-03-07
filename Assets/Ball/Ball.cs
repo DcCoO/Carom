@@ -11,13 +11,14 @@ public class Ball : MonoBehaviour {
 	Vector3 lastVelocity = Vector3.zero;
 	Transform identity;
 	Vector3 spin;
+	CueAngle cueAngle;
 
 	void Start () {
 		rb = GetComponent<Rigidbody> ();
 		rb.maxAngularVelocity = 100;
 		rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
 		identity = GameObject.Find ("Cue Identity").transform;
-		//spinDuration = new Vector3 (0.985f, 1, 0.985f);
+		cueAngle = GameObject.Find ("Cue").GetComponent<CueAngle> ();
 	}
 
 
@@ -40,8 +41,8 @@ public class Ball : MonoBehaviour {
 
 	void FixedUpdate () {
 
-		DrawArrow.ForDebug (transform.position, hitSide, Color.green);
-		DrawArrow.ForDebug (transform.position, hitForward, Color.red);
+		DrawArrow.ForDebug (transform.position, hitSide.normalized, Color.green);
+		DrawArrow.ForDebug (transform.position, hitForward.normalized, Color.red);
 
 		//reduzir o velocity
 		rb.velocity -= rb.velocity.magnitude > 0.14f ? rb.velocity * drag : rb.velocity;
@@ -60,7 +61,7 @@ public class Ball : MonoBehaviour {
 		rb.AddForce(hitForward, ForceMode.VelocityChange);
 		rb.AddForce(hitSide, ForceMode.VelocityChange);
 		//spinIntensity -= Time.deltaTime;
-		float K = 1f;
+		float K = 0.95f;
 		hitSide *= K; hitForward *= K;	
 
 		//ampliar a rotacao de acordo com o velocity
@@ -88,8 +89,11 @@ public class Ball : MonoBehaviour {
 
 			//90 = raspando : 180 = perpendicular
 			//90               0
-			lastVelocity =  AngleAddedBySpin(180f - Vector3.Angle (lastVelocity, cp.normal)) * 
-				Vector3.Reflect (lastVelocity, cp.normal) * wallDamp;
+			lastVelocity = AngleAddedBySpin (180f - Vector3.Angle (lastVelocity, cp.normal)) *
+			Vector3.Reflect (lastVelocity, cp.normal) * wallDamp;
+
+			//COLOCAR SPIN FOR ANGLE PRA MODIFICAR O ANGULO QUE A BOCA RICOCHETEIA
+			//	SpinForAngle();
 			
 			//print ((180f - Vector3.Angle (lastVelocity, rb.velocity))/2f);
 
@@ -146,10 +150,10 @@ public class Ball : MonoBehaviour {
 
 	public void Hit(Vector2 direction, float power, Vector2 spin){
 		//seno do angulo do taco
-		float angleForce = Mathf.Sin ( Mathf.Deg2Rad * GameObject.Find ("Cue").GetComponent<CueAngle> ().angle);
+		float angleForce = sin (cueAngle.angle);
 
 		//quanto maior o angulo do taco, menor o efeito pro lado
-		spin.x *= (1 - angleForce);
+		//spin.x *= (1 - angleForce);
 
 		//zera rotacao
 		rb.angularVelocity = Vector3.zero;
@@ -168,14 +172,32 @@ public class Ball : MonoBehaviour {
 		if(spin.y < 0) hitForward = rotatePointAroundAxis(hitForward);
 		//direcao lateral gerada pelo efeito
 		hitSide = Vector3.Cross (Vector3.up, hitForward);
+		print (hitSide);
 		if(spin.x < 0) hitSide = rotatePointAroundAxis(hitSide);
-
+		if(spin.y < 0) hitSide = rotatePointAroundAxis(hitSide);
+		print (hitSide);
 		//escalando os vetores do efeito
-		hitForward *= Mathf.Abs (spin.y) * power * angleForce;
-		hitSide	   *= Mathf.Abs (spin.x) * power * angleForce;
+		hitForward *= Mathf.Abs (spin.y) * 1 * angleForce;
+		hitSide	   *= Mathf.Abs (spin.x) * 1 * CurveForAngle();
+		print (hitSide);
+	}
+
+	float CurveForAngle(){
+		return cueAngle.angle < 45 ? 0 : (cueAngle.angle - 45f)/45f;
+	}
+
+	float SpinForAngle(){
+		float spinIncrease = 1.2f;
+		return cueAngle.angle <= 45 ? 
+			((spinIncrease - 1) * cueAngle.angle) / 45f + 1f : 
+			(spinIncrease * (90 - cueAngle.angle)) / 45;
 	}
 
 	Vector3 rotatePointAroundAxis(Vector3 point) {
 		return Quaternion.AngleAxis(180f, Vector3.up) * point;
+	}
+
+	float sin(float angle){
+		return Mathf.Sin (angle * Mathf.Deg2Rad);
 	}
 }
