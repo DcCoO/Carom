@@ -41,8 +41,8 @@ public class Ball : MonoBehaviour {
 
 	void FixedUpdate () {
 
-		DrawArrow.ForDebug (transform.position, hitSide.normalized, Color.green);
-		DrawArrow.ForDebug (transform.position, hitForward.normalized, Color.red);
+		//DrawArrow.ForDebug (transform.position, hitSide.normalized, Color.green);
+		//DrawArrow.ForDebug (transform.position, hitForward.normalized, Color.red);
 
 		//reduzir o velocity
 		rb.velocity -= rb.velocity.magnitude > 0.14f ? rb.velocity * drag : rb.velocity;
@@ -89,7 +89,7 @@ public class Ball : MonoBehaviour {
 
 			//90 = raspando : 180 = perpendicular
 			//90               0
-			lastVelocity = AngleAddedBySpin (180f - Vector3.Angle (lastVelocity, cp.normal)) *
+			lastVelocity = AngleAddedBySpin (180f - Vector3.Angle (lastVelocity, cp.normal), SpinForAngle()) *
 			Vector3.Reflect (lastVelocity, cp.normal) * wallDamp;
 
 			//COLOCAR SPIN FOR ANGLE PRA MODIFICAR O ANGULO QUE A BOCA RICOCHETEIA
@@ -124,7 +124,7 @@ public class Ball : MonoBehaviour {
 	//65 - 0
 
 	float maxContactAngle = 65f, maxAngle = 30f;
-	Quaternion AngleAddedBySpin(float contactAngle){
+	Quaternion AngleAddedBySpin(float contactAngle, float spinForAngle){
 		//print ("sideSpin = " + sideSpin + " --- contato = " + contactAngle +" --- desviada de " + Mathf.Max (0, 35f - 0.684f * contactAngle));
 		if (contactAngle > maxContactAngle) return Quaternion.Euler (0, 0, 0);
 
@@ -132,12 +132,12 @@ public class Ball : MonoBehaviour {
 		//	((maxContactAngle - contactAngle) / maxContactAngle) * 
 		//	(maxAngle * (sideSpin/rb.maxAngularVelocity))); 
 
-
+		float maxLocalAngle = maxAngle * spinForAngle;
 
 		return Quaternion.Euler(
 			0, 
 			((maxContactAngle - contactAngle) / maxContactAngle) * 
-			(maxAngle * (sideSpin/rb.maxAngularVelocity)), 
+			(maxLocalAngle * (sideSpin/rb.maxAngularVelocity)), 
 			0
 		);
 	}
@@ -172,14 +172,14 @@ public class Ball : MonoBehaviour {
 		if(spin.y < 0) hitForward = rotatePointAroundAxis(hitForward);
 		//direcao lateral gerada pelo efeito
 		hitSide = Vector3.Cross (Vector3.up, hitForward);
-		print (hitSide);
+		
 		if(spin.x < 0) hitSide = rotatePointAroundAxis(hitSide);
 		if(spin.y < 0) hitSide = rotatePointAroundAxis(hitSide);
-		print (hitSide);
+		
 		//escalando os vetores do efeito
-		hitForward *= Mathf.Abs (spin.y) * 1 * angleForce;
-		hitSide	   *= Mathf.Abs (spin.x) * 1 * CurveForAngle();
-		print (hitSide);
+		hitForward *= Mathf.Abs (spin.y) * (power/20f) * angleForce;
+		hitSide	   *= Mathf.Abs (spin.x) * (power/20f) * CurveForAngle();
+		print (cueAngle.angle + ": " + CurveForAngle());
 	}
 
 	float CurveForAngle(){
